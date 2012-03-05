@@ -50,6 +50,11 @@ Demo
 -----
 There is a demo application & an apk in the repository. 
 
+Licence
+-----
+
+The code in this project is licensed under the Apache Software License 2.0.
+
 Contributing
 ------------
 
