@@ -62,7 +62,7 @@ public class ImageLoader implements DownloadCallback {
         if(cache.contains(url)) {
             Bitmap bm = cache.get(url);
             if(bm != null && !bm.isRecycled()) {
-                activity.runOnUiThread(new BitmapDisplayer(imageView, bm, url));
+                imageView.setImageBitmap(bm);
                 return;
             } else {
                 cache.remove(url);
