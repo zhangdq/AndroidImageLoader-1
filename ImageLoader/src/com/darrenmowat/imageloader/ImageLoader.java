@@ -1,0 +1,148 @@
+package com.darrenmowat.imageloader;
+
+import com.darrenmowat.imageloader.cache.BitmapCache;
+
+import android.app.Activity;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+import android.util.Log;
+import android.view.Display;
+import android.view.WindowManager;
+import android.widget.ImageView;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+/*
+ * This class does not support Pre loading of images
+ */
+public class ImageLoader implements DownloadCallback {
+    
+    private String tag;
+
+    private static int defaultDrawable = R.drawable.ic_launcher;
+    private static Drawable def;
+
+    private BitmapCache cache;
+    
+    private ExecutorService storagePool;
+    private ExecutorService downloadPool;
+    
+    private boolean hasSetGlobalScreenSize;
+    
+    public ImageLoader() {
+        this("ImageLoader");
+    }
+
+    public ImageLoader(String tag) {
+        this.tag = tag;
+        hasSetGlobalScreenSize = false;
+        // Load threads are short lived
+        // They just load a file from the disk
+        storagePool = Executors.newCachedThreadPool();
+        // We have 2 threads that can do downloads 
+        // off the UI thread. These will be longer lived
+        // Than the file loader threads
+        downloadPool = Executors.newFixedThreadPool(2);
+        // In memory cache
+        cache = BitmapCache.getInstance();
+    }
+    
+    public void setImage(String url, ImageView imageView, Activity activity) {
+        setImage(url, imageView, activity, true);
+    }
+    
+    public void setImage(String url, ImageView imageView, Activity activity, boolean setPendingImage) {
+        // Don't support preloading yet
+        if(activity == null || imageView == null) {
+            throw new IllegalArgumentException("Activtiy or ImageView was null.");
+        }
+        imageView.setTag(url);
+        if(cache.contains(url)) {
+            Bitmap bm = cache.get(url);
+            if(bm != null && !bm.isRecycled()) {
+                activity.runOnUiThread(new BitmapDisplayer(imageView, bm, url));
+                return;
+            } else {
+                cache.remove(url);
+            }
+        }
+        if(setPendingImage) {
+            if(def == null) {
+                def = activity.getResources().getDrawable(defaultDrawable);
+            }
+            imageView.setImageDrawable(def);
+        }
+        // Set the ImageViews tag to the Url. 
+        // This helps us check if the ImageView still requires this image
+        // Might not due to View Recycling
+        if(!hasSetGlobalScreenSize) {
+            Display display = ((WindowManager) activity.getSystemService(Context.WINDOW_SERVICE))
+                    .getDefaultDisplay();
+            if (display != null) {
+                if (display.getHeight() > 0 && display.getWidth() > 0) {
+                    int screenWidth = display.getWidth();
+                    ImageLoadRunnable.setScreenWidth(screenWidth);
+                    ImageDownloadRunnable.setScreenWidth(screenWidth);
+                    hasSetGlobalScreenSize = true;
+                }
+            }
+        }
+        ImageLoadRunnable fileLoader = new ImageLoadRunnable(url, imageView, activity, this);
+        storagePool.execute(fileLoader);
+    }
+    
+    
+    @Override
+    public void needsDownloaded(String url, ImageView imageView, Activity activity) {
+        ImageDownloadRunnable fileDownloader = new ImageDownloadRunnable(url, imageView, activity);
+        downloadPool.execute(fileDownloader);
+    }
+      
+    /*
+     * Clear the In Memory Cache
+     */
+    public void clearInMemoryCache() {
+        cache.clear();
+    }
+    
+    /*
+     * Delete every cached image stored on the filesystem
+     */
+    public void clearDiskCache(Context context) {
+        storagePool.execute(new CacheCleanRunnable(context, true));
+    }
+    
+    /*
+     * Delete images which haven't been modified in the last 2 days
+     */
+    public void cleanImageCache(Context context) {
+        storagePool.execute(new CacheCleanRunnable(context));
+    }
+    
+    /*
+     * Delete images which haven't been modified in the 
+     * {time} milliseconds
+     */
+    public void cleanImageCache(Context context, long time) {
+        storagePool.execute(new CacheCleanRunnable(context));
+    }
+    
+    public static void setDefaultDrawableId(int id) {
+        defaultDrawable = id;
+    }
+    
+    private static ImageLoader mInstance; 
+    
+    public static ImageLoader getInstance() {
+        if(mInstance == null) {
+            mInstance = new ImageLoader();
+        }
+        return mInstance;
+    }
+    
+    private void log(String msg) {
+        Log.v(tag, msg);
+    }
+}
