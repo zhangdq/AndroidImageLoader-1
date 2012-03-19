@@ -3,7 +3,6 @@ package com.darrenmowat.imageloaderdemo;
 
 import com.darrenmowat.imageloader.ImageLoader;
 
-import android.app.Activity;
 import android.app.ListActivity;
 import android.os.Bundle;
 import android.view.Menu;

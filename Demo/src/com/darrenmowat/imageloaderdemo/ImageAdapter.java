@@ -1,21 +1,16 @@
 package com.darrenmowat.imageloaderdemo;
 
 import com.darrenmowat.imageloader.ImageLoader;
-import com.darrenmowat.imageloader.cache.BitmapCache;
 
 import android.app.Activity;
-import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
 import java.util.ArrayList;
-import java.util.Observable;
-import java.util.Observer;
 
-public class ImageAdapter extends BaseAdapter implements Observer{
+public class ImageAdapter extends BaseAdapter {
     
     private Activity activity;
     public ArrayList<String> urls;
@@ -23,7 +18,6 @@ public class ImageAdapter extends BaseAdapter implements Observer{
     public ImageAdapter(ArrayList<String> urls, Activity activity) {
         this.activity = activity;
         this.urls = urls;
-        BitmapCache.getInstance().addObserver(this);
     }
 
     @Override
@@ -60,18 +54,5 @@ public class ImageAdapter extends BaseAdapter implements Observer{
         return iv;
     }
 
-    /*
-     * The cache fires this when it has been cleared.
-     * Allows you to refresh your data
-     * 
-     * (non-Javadoc)
-     * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
-     */
-    @Override
-    public void update(Observable observable, Object data) {
-        if(observable instanceof BitmapCache) {
-            notifyDataSetChanged();
-        }
-    }
     
 }

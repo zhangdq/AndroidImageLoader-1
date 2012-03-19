@@ -9,7 +9,7 @@ Android Image Loader uses a 2 tier cache to cache images in memory and on intern
 Usage
 -----
 
-Add AndroidImageLoader.jar to your project or import the source.
+Add AndroidImageLoader as an Android Library Project to your project.
 
 First set the default drawable that ImageLoader should use. This should be done once when your application starts (i.e. In your Application class):
 
@@ -31,6 +31,17 @@ Thirdly:
 	...Thats it!
 	
 The image will be downloaded, saved to the disk & resized to best support the users screen size. 
+
+You can also set custom code to dispaly your bitmaps once they have been loaded / downloaded.
+
+	public class CustomBitmapDisplayer implements BitmapDisplayer {
+
+    @Override
+    public void displayBitmap(ImageView imageView, Context context, Bitmap bitmap, 		String url) {
+        	// Do something
+    	}
+	}
+
 	
 Android Image Loader also has methods to clean out old files from the on disk image cache. You can delete images that haven't been used for 2 days by:
 
