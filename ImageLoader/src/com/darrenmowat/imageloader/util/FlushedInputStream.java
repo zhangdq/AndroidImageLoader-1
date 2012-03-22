@@ -1,11 +1,16 @@
-package com.darrenmowat.boothr.data.imageloader.util;
+package com.darrenmowat.imageloader.util;
 
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+/*
+ * 
+ * Fixes a bug on old 2.1 devices - HTC Hero etc
+ * 
+ */
 public class FlushedInputStream extends FilterInputStream {
-
+    
     public FlushedInputStream(InputStream inputStream) {
         super(inputStream);
     }
@@ -16,16 +21,15 @@ public class FlushedInputStream extends FilterInputStream {
         while (totalBytesSkipped < n) {
             long bytesSkipped = in.skip(n - totalBytesSkipped);
             if (bytesSkipped == 0L) {
-                int b = read();
-                if (b < 0) {
-                    break; // we reached EOF
-                } else {
-                    bytesSkipped = 1; // we read one byte
-                }
-            }
+                  int b = read();
+                  if (b < 0) {
+                      break;  // we reached EOF
+                  } else {
+                      bytesSkipped = 1; // we read one byte
+                  }
+           }
             totalBytesSkipped += bytesSkipped;
         }
         return totalBytesSkipped;
     }
-
 }
