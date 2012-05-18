@@ -11,7 +11,6 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -151,10 +150,6 @@ public class ImageDownloadRunnable implements Runnable {
 
     public static void setScreenWidth(int width) {
         screenWidth = width;
-    }
-
-    private void log(String msg) {
-        Log.v("FileDownloader", msg);
     }
 
     private void log(String msg, Exception e) {

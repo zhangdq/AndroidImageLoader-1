@@ -32,7 +32,7 @@ Thirdly:
 	
 The image will be downloaded, saved to the disk & resized to best support the users screen size. 
 
-You can also set custom code to dispaly your bitmaps once they have been loaded / downloaded.
+You can also set custom code to display your bitmaps once they have been loaded / downloaded.
 
 	public class CustomBitmapDisplayer implements BitmapDisplayer {
 
@@ -41,6 +41,8 @@ You can also set custom code to dispaly your bitmaps once they have been loaded 
         	// Do something
     	}
 	}
+	
+This is useful for getting notified when an Image has been downloaded. For example in Boothr I use a CustomBitmapDisplayer to notify me when an image has been downloaded for a Home Screen Widget. I can then notify the widget that the image is available.
 
 	
 Android Image Loader also has methods to clean out old files from the on disk image cache. You can delete images that haven't been used for 2 days by:

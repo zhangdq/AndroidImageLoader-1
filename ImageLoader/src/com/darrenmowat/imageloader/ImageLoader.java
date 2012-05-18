@@ -6,8 +6,9 @@ import com.darrenmowat.imageloader.util.Util;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
+import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -21,6 +22,7 @@ import java.util.concurrent.Executors;
  */
 public class ImageLoader implements DownloadCallback {
     
+    @SuppressWarnings("unused")
     private String tag;
 
     private static int defaultDrawable = -1;
@@ -76,7 +78,7 @@ public class ImageLoader implements DownloadCallback {
         if(cache.contains(url)) {
             Bitmap bm = cache.get(url);
             if(bm != null && !bm.isRecycled()) {
-                imageView.setImageBitmap(bm);
+                bitmapDisplayer.displayBitmap(imageView, context, bm, url);
                 return;
             } else {
                 cache.remove(url);
@@ -88,6 +90,8 @@ public class ImageLoader implements DownloadCallback {
             }
             if(defaultDrawable != -1) {
                 // User has set the defaultDrawable
+                Bitmap  bm =  ((BitmapDrawable) def).getBitmap();
+                bitmapDisplayer.displayBitmap(imageView, context, bm, url);
                 imageView.setImageDrawable(def);
             }
         }
@@ -95,8 +99,10 @@ public class ImageLoader implements DownloadCallback {
             Display display = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE))
                     .getDefaultDisplay();
             if (display != null) {
-                if (display.getHeight() > 0 && display.getWidth() > 0) {
-                    int screenWidth = display.getWidth();
+                DisplayMetrics metrics = new DisplayMetrics();
+                display.getMetrics(metrics);
+                if (metrics.heightPixels > 0 &&  metrics.widthPixels > 0) {
+                    int screenWidth = metrics.widthPixels;
                     ImageLoadRunnable.setScreenWidth(screenWidth);
                     ImageDownloadRunnable.setScreenWidth(screenWidth);
                     hasSetGlobalScreenSize = true;
@@ -160,8 +166,5 @@ public class ImageLoader implements DownloadCallback {
         }
         return mInstance;
     }
-    
-    private void log(String msg) {
-        Log.v(tag, msg);
-    }
+   
 }

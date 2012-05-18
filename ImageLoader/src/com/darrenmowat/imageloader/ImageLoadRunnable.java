@@ -4,7 +4,6 @@ package com.darrenmowat.imageloader;
 import com.darrenmowat.imageloader.cache.BitmapCache;
 import com.darrenmowat.imageloader.util.Util;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
@@ -87,6 +86,7 @@ public class ImageLoadRunnable implements Runnable {
         screenWidth = width;
     }
     
+    @SuppressWarnings("unused")
     private void log(String msg) {
         Log.v("FileLoader", msg);
     }

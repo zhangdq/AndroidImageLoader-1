@@ -12,16 +12,16 @@ public class CacheCleanRunnable implements Runnable {
     private Context context;
     private boolean purgeAll;
     private long deleteOlderThan;
-    
-    private static long TWO_DAYS = 172800000;
+
     private static long ONE_DAY =  86400000;
+    private static long TWO_DAYS = ONE_DAY * 2;
     
     public CacheCleanRunnable(Context context) {
-        this(context, false, ONE_DAY);
+        this(context, false, TWO_DAYS);
     }
     
     public CacheCleanRunnable(Context context, boolean purgeAll) {
-        this(context, purgeAll, ONE_DAY);
+        this(context, purgeAll, TWO_DAYS);
     }
     
     public CacheCleanRunnable(Context context, long deleteOlderThan) {
