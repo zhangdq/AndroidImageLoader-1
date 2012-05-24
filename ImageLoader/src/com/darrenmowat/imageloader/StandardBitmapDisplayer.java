@@ -29,7 +29,7 @@ public class StandardBitmapDisplayer implements BitmapDisplayer {
                 @Override
                 public void run() {
                     imageView.setImageBitmap(bitmap); 
-                    imageView.setAdjustViewBounds(true);
+                    // imageView.setAdjustViewBounds(true);
                 }
                 
             });
