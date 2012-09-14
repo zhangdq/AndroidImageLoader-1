@@ -1,3 +1,6 @@
+
+*This library is no longer maintained. Checkout [NetworkImageView][2] instead*
+
 Android Image Loader
 ====================
 
@@ -76,3 +79,4 @@ Contributing
 6. Enjoy a refreshing Diet Coke and wait
 
 [1]: https://github.com/DarrenMowat/AndroidImageLoader/issues
+[2]: https://github.com/DarrenMowat/NetworkImageView
